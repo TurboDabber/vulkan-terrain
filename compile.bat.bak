@@ -1,0 +1,2 @@
+C:\Users\Pawel\source\repos\vulkanAPI\vulkan\Bin\glslc.exe test_shader.vert -o test_shader.vert.spv
+C:\Users\Pawel\source\repos\vulkanAPI\vulkan\Bin\glslc.exe test_shader.frag -o test_shader.frag.spv

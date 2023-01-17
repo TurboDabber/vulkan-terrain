@@ -1,0 +1,2 @@
+C:\Users\Pawel\source\repos\vulkanAPI\vulkan\Bin\glslc.exe C:\Users\Pawel\source\repos\vulkanAPI\vulkanAPI\simple_shader.vert -o C:\Users\Pawel\source\repos\vulkanAPI\vulkanAPI\simple_shader.vert.spv
+C:\Users\Pawel\source\repos\vulkanAPI\vulkan\Bin\glslc.exe C:\Users\Pawel\source\repos\vulkanAPI\vulkanAPI\simple_shader.frag -o C:\Users\Pawel\source\repos\vulkanAPI\vulkanAPI\simple_shader.frag.spv
