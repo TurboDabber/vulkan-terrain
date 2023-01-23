@@ -13,7 +13,7 @@ namespace app {
 	public:
 		static constexpr int _WIDTH_ = 1200;
 		static constexpr int _HEIGHT_ = 900;
-		static constexpr int _CHUNK_SIZE_ = 2000;
+		static constexpr int _CHUNK_SIZE_ = 40;
 		PerlinGenerator perlin;
 		DefaultApp();
 		~DefaultApp();
@@ -32,6 +32,7 @@ namespace app {
 		void recreateSwapChain();
 		void recordCommandBuffer(int imageIndex);
 		void renderGameObjects(VkCommandBuffer commandBuffer);
+		std::unique_ptr<AppModel> createCubeModel(AppDevice& device, glm::vec3 offset);
 		std::unique_ptr<AppModel> createChunk(AppDevice& device, glm::vec3 offset, int chunkX, int chunkZ);
 		AppWindow appWindow{ _WIDTH_, _HEIGHT_, "Interactive and generated terrain in vulkan API" };
 		AppDevice appDevice{ appWindow };

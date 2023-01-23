@@ -15,6 +15,7 @@
 
 namespace app {
 
+    static const float PROJECTION_RENDER_DISTANCE = 1000.f;
 	DefaultApp::DefaultApp() { loadGameObjects(); }
 
 	DefaultApp::~DefaultApp() {}
@@ -51,7 +52,7 @@ namespace app {
             camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);;
             float aspect = appRenderer.getAspectRatio();
             
-            camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 1000.f);
+            camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.01f, PROJECTION_RENDER_DISTANCE);
 			if (auto commandBuffer = appRenderer.beginFrame()) {
 				appRenderer.beginSwapChainRenderPass(commandBuffer);
 				simpleRenderSystem.renderGameObjects(commandBuffer, gameObjects, camera);
@@ -62,6 +63,49 @@ namespace app {
 		vkDeviceWaitIdle(appDevice.device());
 	}
 
+    std::unique_ptr<AppModel> DefaultApp::createCubeModel(AppDevice& device, glm::vec3 offset) {
+        AppModel::Builder modelBuilder{};
+        modelBuilder.vertices = {
+            // left face (white)
+            {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
+            {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+            {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}},
+            {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
+
+            {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
+            {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+            {{.5f, -.5f, .5f}, {.8f, .8f, .1f}},
+            {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
+
+            {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+            {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+            {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+            {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+
+            {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+            {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+            {{-.5f, .5f, .5f}, {.8f, .1f, .1f}},
+            {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+
+            {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+            {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+            {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+            {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+
+            {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+            {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+            {{-.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+            {{.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+        };
+
+        for (auto& v : modelBuilder.vertices) {
+            v.position += offset;
+        }
+        modelBuilder.indices = { 0,  1,  2,  0,  3,  1,  4,  5,  6,  4,  7,  5,  8,  9,  10, 8,  11, 9,
+                          12, 13, 14, 12, 15, 13, 16, 17, 18, 16, 19, 17, 20, 21, 22, 20, 23, 21 };
+
+        return std::make_unique<AppModel>(device, modelBuilder);
+    }
 
     std::unique_ptr<AppModel> DefaultApp::createChunk(AppDevice & device, glm::vec3 offset, int chunkX, int chunkZ) {
         std::vector<AppModel::Vertex> vertices{};
@@ -95,12 +139,20 @@ namespace app {
                 vertices.push_back({ {(float)x + 1.f +  (chunkX * _CHUNK_SIZE_), values[x + 1+ z     * _CHUNK_SIZE_],(float)z +       (chunkZ * _CHUNK_SIZE_)}, {perlinColor2 , col2/2+ perlinColor3, perlinColor1 } });
                 vertices.push_back({ {(float)x + 1.f +  (chunkX * _CHUNK_SIZE_), values[x + 1+(z + 1)* _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)}, {perlinColor2 , col2/2+ perlinColor3, perlinColor1 } });
                 vertices.push_back({ {(float)x +        (chunkX * _CHUNK_SIZE_), values[x +   (z + 1)* _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)}, {perlinColor2 , col2/2+ perlinColor3, perlinColor1 } });
+                //vertices.push_back({ {(float)x + (chunkX * _CHUNK_SIZE_), values[x + z * _CHUNK_SIZE_],(float)z + (chunkZ * _CHUNK_SIZE_)}, {0.f , 1.f ,0.f } });
+                //vertices.push_back({ {(float)x + 1.f + (chunkX * _CHUNK_SIZE_), values[x + 1 + z * _CHUNK_SIZE_],(float)z + (chunkZ * _CHUNK_SIZE_)},  {0.f , 1.f ,0.f } });
+                //vertices.push_back({ {(float)x + (chunkX * _CHUNK_SIZE_), values[x + (z + 1) * _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)},  {0.f , 1.f ,0.f } });
+                //vertices.push_back({ {(float)x + 1.f + (chunkX * _CHUNK_SIZE_), values[x + 1 + z * _CHUNK_SIZE_],(float)z + (chunkZ * _CHUNK_SIZE_)},  {0.f , 1.f ,0.f } });
+                //vertices.push_back({ {(float)x + 1.f + (chunkX * _CHUNK_SIZE_), values[x + 1 + (z + 1) * _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)},  {0.f , 1.f ,0.f } });
+                //vertices.push_back({ {(float)x + (chunkX * _CHUNK_SIZE_), values[x + (z + 1) * _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)},  {0.f , 1.f ,0.f } });
             }
         }
         for (auto& v : vertices) {
             v.position += offset;
         }
-        return std::make_unique<AppModel>(device, vertices);
+        AppModel::Builder modelBuilder{};
+        modelBuilder.vertices = vertices;
+        return std::make_unique<AppModel>(device, modelBuilder);
     }
 
     void DefaultApp::loadGameObjects() {
@@ -110,6 +162,19 @@ namespace app {
         cube.transform.translation = { -200.0f, 5.f, -200.0f };
         cube.transform.scale = { 1.f, 1.f, 1.f };
         gameObjects.push_back(std::move(cube));
+        std::shared_ptr<AppModel> appModel2 = createCubeModel(appDevice, { .0f, .0f, .0f });
+        auto cube2 = AppGameObject::createGameObject();
+        cube2.model = appModel2;
+        cube2.transform.translation = { -200.0f, 5.f, -200.0f };
+        cube2.transform.scale = { 1.f, 1.f, 1.f };
+        gameObjects.push_back(std::move(cube2));
+        std::shared_ptr<AppModel> appModel3 =
+            AppModel::createModelFromFile(appDevice, "models/smooth_vase.obj");
+        auto gameObj = AppGameObject::createGameObject();
+        gameObj.model = appModel3;
+        gameObj.transform.translation = { .0f, .0f, 2.5f };
+        gameObj.transform.scale = glm::vec3(3.f);
+        gameObjects.push_back(std::move(gameObj));
 	}
 	
 }

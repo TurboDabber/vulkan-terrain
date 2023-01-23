@@ -38,6 +38,7 @@
     <ClCompile Include="app_pipeline.cpp" />
     <ClCompile Include="app_renderer.cpp" />
     <ClCompile Include="app_renderer.hpp" />
+    <ClCompile Include="app_utils.hpp" />
     <ClCompile Include="app_window.cpp" />
     <ClCompile Include="keyboard_movement_controller.cpp" />
     <ClCompile Include="main.cpp" />
