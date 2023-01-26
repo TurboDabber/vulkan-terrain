@@ -144,17 +144,13 @@ namespace app
 
 	std::vector<VkVertexInputAttributeDescription> AppModel::Vertex::getAttributeDescription()
 	{
-		std::vector< VkVertexInputAttributeDescription> attributeDescription(2);
-		attributeDescription[0].binding = 0;
-		attributeDescription[0].location = 0;
-		attributeDescription[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-		attributeDescription[0].offset = offsetof(Vertex, position);
+		std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
-		attributeDescription[1].binding = 0;
-		attributeDescription[1].location = 1;
-		attributeDescription[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-		attributeDescription[1].offset = offsetof(Vertex, color);
-		return attributeDescription;
+		attributeDescriptions.push_back({0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position)});
+		attributeDescriptions.push_back({1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)});
+		attributeDescriptions.push_back({2, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal)});
+		attributeDescriptions.push_back({3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv)});
+		return attributeDescriptions;
 	}
 
 	bool AppModel::Builder::loadOBJ(
@@ -238,7 +234,7 @@ namespace app
 		std::vector<glm::vec2> uvsLoaded;
 		std::vector<glm::vec3> normalsLoaded;
 		
-		if (!loadOBJ("C:\\Users\\Pawel\\Downloads\\OGL3_6\\suzanne.obj", verticesLoaded, uvsLoaded, normalsLoaded))
+		if (!loadOBJ("C:\\Users\\Pawel\\source\\repos\\vulkanAPI\\vulkanAPI\\tree.obj", verticesLoaded, uvsLoaded, normalsLoaded))
 		{
 			throw std::runtime_error("loading 3d .obj file failed");
 		}
@@ -248,7 +244,8 @@ namespace app
 
 		for (int i = 0; i < verticesLoaded.size(); i++)
 		{
-			vertices.push_back({ {verticesLoaded[i].x, verticesLoaded[i].y, verticesLoaded[i].z}, {0.5f, 0.5f ,0.5f}});
+			vertices.push_back({ {verticesLoaded[i].x, verticesLoaded[i].y, verticesLoaded[i].z}, {0.5f, 0.5f ,0.5f}, {normalsLoaded[i].x, normalsLoaded[i].y, normalsLoaded[i].z} });
+
 		}
 		
 	}

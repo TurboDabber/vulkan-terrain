@@ -133,12 +133,56 @@ namespace app {
                 auto col1 = 1.f-((((values[x + z * _CHUNK_SIZE_] + values[x + 1 + z * _CHUNK_SIZE_] + values[x + (z + 1) * _CHUNK_SIZE_])/3.f)+25.f)/50.f);
                 auto col2 = 1.f- ((((values[x + 1 + z * _CHUNK_SIZE_] + values[x + 1 + (z + 1) * _CHUNK_SIZE_] + values[x + (z + 1) * _CHUNK_SIZE_]) / 3.f) + 25.f) / 50.f);
                
-                vertices.push_back({ {(float)x +        (chunkX * _CHUNK_SIZE_), values[x +    z     * _CHUNK_SIZE_],(float)z + (chunkZ * _CHUNK_SIZE_)}, {perlinColor2 , col1/2+ perlinColor3,perlinColor1 }});
-                vertices.push_back({ {(float)x + 1.f +  (chunkX * _CHUNK_SIZE_), values[x + 1+ z     * _CHUNK_SIZE_],(float)z +       (chunkZ * _CHUNK_SIZE_)}, {perlinColor2 , col1/2+ perlinColor3, perlinColor1 } });
-                vertices.push_back({ {(float)x +        (chunkX * _CHUNK_SIZE_), values[x +    (z+1)  * _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)}, {perlinColor2 , col1/2+ perlinColor3, perlinColor1 } });
-                vertices.push_back({ {(float)x + 1.f +  (chunkX * _CHUNK_SIZE_), values[x + 1+ z     * _CHUNK_SIZE_],(float)z +       (chunkZ * _CHUNK_SIZE_)}, {perlinColor2 , col2/2+ perlinColor3, perlinColor1 } });
-                vertices.push_back({ {(float)x + 1.f +  (chunkX * _CHUNK_SIZE_), values[x + 1+(z + 1)* _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)}, {perlinColor2 , col2/2+ perlinColor3, perlinColor1 } });
-                vertices.push_back({ {(float)x +        (chunkX * _CHUNK_SIZE_), values[x +   (z + 1)* _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)}, {perlinColor2 , col2/2+ perlinColor3, perlinColor1 } });
+                glm::vec3 p1 = { 
+                    (float)x + (chunkX * _CHUNK_SIZE_),
+                    values[x + z * _CHUNK_SIZE_],
+                    (float)z + (chunkZ * _CHUNK_SIZE_)
+                };
+
+
+                glm::vec3 p2 = {
+                    (float)x + 1.f + (chunkX * _CHUNK_SIZE_),
+                    values[x + 1 + z * _CHUNK_SIZE_],
+                    (float)z + (chunkZ * _CHUNK_SIZE_)
+                };
+
+                glm::vec3 p3 = {
+                    (float)x + (chunkX * _CHUNK_SIZE_),
+                    values[x + (z + 1) * _CHUNK_SIZE_],
+                    (float)z + 1.f + (chunkZ * _CHUNK_SIZE_)
+                };
+
+                glm::vec3 p4 = {
+                    (float)x + 1.f + (chunkX * _CHUNK_SIZE_),
+                    values[x + 1 + (z + 1) * _CHUNK_SIZE_],
+                    (float)z + 1.f + (chunkZ * _CHUNK_SIZE_)
+                };
+
+                glm::vec3 A1 = p2 - p1;
+                glm::vec3 B1 = p3 - p1;
+                //Nx = Ay * Bz - Az * By
+                float Nx1 = (A1.y * B1.z) - (A1.z * B1.y);
+                //Ny = Az * Bx - Ax * Bz
+                float Ny1 = (A1.z * B1.x) - (A1.x * B1.z);
+                //Nz = Ax * By - Ay * Bx
+                float Nz1 = (A1.x * B1.y) - (A1.y * B1.x);
+
+                glm::vec3 A2 = p4 - p2;
+                glm::vec3 B2 = p3 - p2;
+           
+                //Nx = Ay * Bz - Az * By
+                float Nx2 =(A2.y * B2.z) - (A2.z * B2.y);
+                //Ny = Az * Bx - Ax * Bz
+                float Ny2 =(A2.z * B2.x) - (A2.x * B2.z);
+                //Nz = Ax * By - Ay * Bx
+                float Nz2 =(A2.x * B2.y) - (A2.y * B2.x);
+
+                vertices.push_back({ {(float)x +        (chunkX * _CHUNK_SIZE_), values[x +    z     * _CHUNK_SIZE_],(float)z + (chunkZ * _CHUNK_SIZE_)},{0.f , 1.f ,col2 }, {Nx1,Ny1,Nz1} });
+                vertices.push_back({ {(float)x + 1.f +  (chunkX * _CHUNK_SIZE_), values[x + 1+ z     * _CHUNK_SIZE_],(float)z +       (chunkZ * _CHUNK_SIZE_)}, {0.f , 1.f ,col2 }, {Nx1,Ny1,Nz1} });
+                vertices.push_back({ {(float)x +        (chunkX * _CHUNK_SIZE_), values[x +    (z+1)  * _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)}, {0.f , 1.f ,col2 }, {Nx1,Ny1,Nz1} });
+                vertices.push_back({ {(float)x + 1.f +  (chunkX * _CHUNK_SIZE_), values[x + 1+ z     * _CHUNK_SIZE_],(float)z +       (chunkZ * _CHUNK_SIZE_)}, {0.f , 1.f ,col1 }, {Nx2,Ny2,Nz2} });
+                vertices.push_back({ {(float)x + 1.f +  (chunkX * _CHUNK_SIZE_), values[x + 1+(z + 1)* _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)}, {0.f , 1.f ,col1 }, {Nx2,Ny2,Nz2} });
+                vertices.push_back({ {(float)x +        (chunkX * _CHUNK_SIZE_), values[x +   (z + 1)* _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)}, {0.f , 1.f ,col1 }, {Nx2,Ny2,Nz2} });
                 //vertices.push_back({ {(float)x + (chunkX * _CHUNK_SIZE_), values[x + z * _CHUNK_SIZE_],(float)z + (chunkZ * _CHUNK_SIZE_)}, {0.f , 1.f ,0.f } });
                 //vertices.push_back({ {(float)x + 1.f + (chunkX * _CHUNK_SIZE_), values[x + 1 + z * _CHUNK_SIZE_],(float)z + (chunkZ * _CHUNK_SIZE_)},  {0.f , 1.f ,0.f } });
                 //vertices.push_back({ {(float)x + (chunkX * _CHUNK_SIZE_), values[x + (z + 1) * _CHUNK_SIZE_],(float)z + 1.f + (chunkZ * _CHUNK_SIZE_)},  {0.f , 1.f ,0.f } });
@@ -168,13 +212,12 @@ namespace app {
         cube2.transform.translation = { -200.0f, 5.f, -200.0f };
         cube2.transform.scale = { 1.f, 1.f, 1.f };
         gameObjects.push_back(std::move(cube2));
-        std::shared_ptr<AppModel> appModel3 =
-            AppModel::createModelFromFile(appDevice, "models/smooth_vase.obj");
-        auto gameObj = AppGameObject::createGameObject();
-        gameObj.model = appModel3;
-        gameObj.transform.translation = { .0f, .0f, 2.5f };
-        gameObj.transform.scale = glm::vec3(3.f);
-        gameObjects.push_back(std::move(gameObj));
+        appModel = AppModel::createModelFromFile(appDevice, "models/smooth_vase.obj");
+        auto tree = AppGameObject::createGameObject();
+        tree.model = appModel;
+        tree.transform.translation = { .5f, .5f, 2.5f };
+        tree.transform.scale = { 3.f, 1.5f, 3.f };
+        gameObjects.push_back(std::move(tree));
 	}
 	
 }

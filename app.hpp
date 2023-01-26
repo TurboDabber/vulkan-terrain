@@ -13,7 +13,7 @@ namespace app {
 	public:
 		static constexpr int _WIDTH_ = 1200;
 		static constexpr int _HEIGHT_ = 900;
-		static constexpr int _CHUNK_SIZE_ = 40;
+		static constexpr int _CHUNK_SIZE_ = 600;
 		PerlinGenerator perlin;
 		DefaultApp();
 		~DefaultApp();

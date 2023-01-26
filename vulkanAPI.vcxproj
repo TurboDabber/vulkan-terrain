@@ -34,6 +34,7 @@
   <ItemGroup>
     <ClCompile Include="app.cpp" />
     <ClCompile Include="app_camera.cpp" />
+    <ClCompile Include="app_game_object.cpp" />
     <ClCompile Include="app_model.cpp" />
     <ClCompile Include="app_pipeline.cpp" />
     <ClCompile Include="app_renderer.cpp" />
